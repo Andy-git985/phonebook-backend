@@ -51,11 +51,38 @@ app.get('/info', (request, response) => {
 
 const generateId = () => {
   const allIds = persons.map((person) => person.id);
-  const number = Math.random() * 1001;
+  const number = Math.floor(Math.random() * 1001);
   return allIds.includes(number) ? generateId() : number;
 };
 
-app.post('/api/persons', (request, response) => {});
+app.post('/api/persons', (request, response) => {
+  const allNames = persons.map((person) => person.name);
+  const body = request.body;
+
+  if (!body.name) {
+    return response.status(400).json({
+      error: 'name missing',
+    });
+  } else if (!body.number) {
+    return response.status(400).json({
+      error: 'number missing',
+    });
+  } else if (allNames.includes(body.name)) {
+    return response.status(400).json({
+      error: 'name already exists in the phonebook',
+    });
+  }
+
+  const person = {
+    id: generateId(),
+    name: body.name,
+    number: body.number,
+  };
+
+  persons = persons.concat(person);
+
+  response.json(person);
+});
 
 app.delete('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id);
