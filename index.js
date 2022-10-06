@@ -49,6 +49,14 @@ app.get('/info', (request, response) => {
   </div>`);
 });
 
+const generateId = () => {
+  const allIds = persons.map((person) => person.id);
+  const number = Math.random() * 1001;
+  return allIds.includes(number) ? generateId() : number;
+};
+
+app.post('/api/persons', (request, response) => {});
+
 app.delete('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id);
   persons = persons.filter((person) => person.id !== id);
