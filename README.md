@@ -2,6 +2,8 @@
 
 Simple phonebook application
 
+Check out my live app: https://falling-snow-2324.fly.dev
+
 ---
 
 > Be sure to add that lovely star 😀 and fork it for your own copy
