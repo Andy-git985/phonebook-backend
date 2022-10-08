@@ -40,8 +40,8 @@ let persons = [
 ];
 
 app.get('/api/persons', (request, response) => {
-  People.find({}).then((persons) => {
-    response.json(persons);
+  People.find({}).then((people) => {
+    response.json(people);
   });
 });
 
@@ -52,10 +52,12 @@ app.get('/api/persons/:id', (request, response) => {
 });
 
 app.get('/info', (request, response) => {
-  response.send(`<div>
-  <p>Phonebook has info for ${persons.length} people</p>
+  People.find({}).then((people) => {
+    response.send(`<div>
+  <p>Phonebook has info for ${people.length} people</p>
   <p>${new Date()}</p>
   </div>`);
+  });
 });
 
 const generateId = () => {
@@ -65,30 +67,36 @@ const generateId = () => {
 };
 
 app.post('/api/persons', (request, response) => {
-  const allNames = persons.map((person) => person.name);
+  // const allNames = persons.map((person) => person.name);
   const body = request.body;
 
-  if (!body.name) {
-    return response.status(400).json({
-      error: 'name missing',
-    });
-  } else if (!body.number) {
-    return response.status(400).json({
-      error: 'number missing',
-    });
-  } else if (allNames.includes(body.name)) {
-    return response.status(400).json({
-      error: 'name already exists in the phonebook',
-    });
-  }
+  People.find({})
+    .then((people) => {
+      const allNames = people.map((person) => people.name);
 
-  const person = new People({
-    name: body.name,
-    number: body.number,
-  });
-  person.save().then((savedPerson) => {
-    response.json(savedPerson);
-  });
+      if (!body.name) {
+        return response.status(400).json({
+          error: 'name missing',
+        });
+      } else if (body.name && !body.number) {
+        return response.status(400).json({
+          error: 'number missing',
+        });
+      } else if (allNames.includes(body.name)) {
+        return response.status(400).json({
+          error: 'name already exists in the phonebook',
+        });
+      }
+
+      const person = new People({
+        name: body.name,
+        number: body.number,
+      });
+      person.save().then((savedPerson) => {
+        response.json(savedPerson);
+      });
+    })
+    .catch((error) => next(error));
 });
 
 app.put('/api/persons/:id', (request, response) => {
