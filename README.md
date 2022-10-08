@@ -18,6 +18,7 @@ Here's where you can go to town on how you actually built this thing. Write as m
 - Installed dotenv and added secrets to fly deployment
 - Live fly deployment is integrated with mongo db
 - Added POST and GET by id method integration to database
+- changed 200 to 204 in front end to re-render the app
 
 ## Lessons Learned:
 
