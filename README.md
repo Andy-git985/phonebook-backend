@@ -1,39 +1,34 @@
-# Introduction
+# My Awesome Project
 
-Simple phonebook application
+Basic phonebook app. Beginner level app to practice deploying applications to the internet.
 
-Check out my live app: https://falling-snow-2324.fly.dev
+**Link to project:** https://falling-snow-2324.fly.dev
 
----
+![alt tag](https://falling-snow-2324.fly.dev)
 
-> Be sure to add that lovely star 😀 and fork it for your own copy
+## How It's Made:
 
----
+**Tech used:** HTML, CSS, JavaScript, Framework of choice
 
-# Objectives
+Here's where you can go to town on how you actually built this thing. Write as much as you can here, it's totally fine if it's not too much just make sure you write _something_. If you don't have too much experience on your resume working on the front end that's totally fine. This is where you can really show off your passion and make up for that ten fold.
 
-Beginner level app to practice deploying applications to the internet.
+## Optimizations
 
----
+- Add mongo db and mongoose integrations
+- Installed dotenv and added secrets to fly deployment
+- Live fly deployment is integrated with mongo db
+- Added POST and GET by id method integration to database
 
-# Who is this for?
+## Lessons Learned:
 
-- It's for beginners & intermediates with little more experience, to help understand the various aspects of building a node app with some complex features
+No matter what your experience level, being an engineer means continuously learning. Every time you build something you always have those _whoa this is awesome_ or _fuck yeah I did it!_ moments. This is where you should share those moments! Recruiters and interviewers love to see that you're self-aware and passionate about growing.
 
----
+## Examples:
 
-# Packages/Dependencies used
+Take a look at these couple examples that I have in my own portfolio:
 
-express, morgan
+**Palettable:** https://github.com/alecortega/palettable
 
----
+**Twitter Battle:** https://github.com/alecortega/twitter-battle
 
-# Install all the dependencies or node packages used for development via Terminal
-
-`npm install`
-
----
-
-# Things to add
-
-Have fun testing and improving it! 😎
+**Patch Panel:** https://github.com/alecortega/patch-panel
