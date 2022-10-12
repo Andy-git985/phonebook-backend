@@ -16,28 +16,28 @@ app.use(
   morgan(':method :url :status :res[content-length] - :response-time ms :body')
 );
 
-let persons = [
-  {
-    id: 1,
-    name: 'Arto Hellas',
-    number: '040-123456',
-  },
-  {
-    id: 2,
-    name: 'Ada Lovelace',
-    number: '39-44-5323523',
-  },
-  {
-    id: 3,
-    name: 'Dan Abramov',
-    number: '12-43-234345',
-  },
-  {
-    id: 4,
-    name: 'Mary Poppendieck',
-    number: '39-23-6423122',
-  },
-];
+// let persons = [
+//   {
+//     id: 1,
+//     name: 'Arto Hellas',
+//     number: '040-123456',
+//   },
+//   {
+//     id: 2,
+//     name: 'Ada Lovelace',
+//     number: '39-44-5323523',
+//   },
+//   {
+//     id: 3,
+//     name: 'Dan Abramov',
+//     number: '12-43-234345',
+//   },
+//   {
+//     id: 4,
+//     name: 'Mary Poppendieck',
+//     number: '39-23-6423122',
+//   },
+// ];
 
 app.get('/api/persons', (request, response) => {
   People.find({}).then((people) => {
@@ -45,10 +45,16 @@ app.get('/api/persons', (request, response) => {
   });
 });
 
-app.get('/api/persons/:id', (request, response) => {
-  People.findById(request.params.id).then((person) => {
-    response.json(person);
-  });
+app.get('/api/persons/:id', (request, response, next) => {
+  People.findById(request.params.id)
+    .then((person) => {
+      if (person) {
+        response.json(person);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 
 app.get('/info', (request, response) => {
@@ -60,61 +66,94 @@ app.get('/info', (request, response) => {
   });
 });
 
-const generateId = () => {
-  const allIds = persons.map((person) => person.id);
-  const number = Math.floor(Math.random() * 1001);
-  return allIds.includes(number) ? generateId() : number;
-};
+// const generateId = () => {
+//   const allIds = persons.map((person) => person.id);
+//   const number = Math.floor(Math.random() * 1001);
+//   return allIds.includes(number) ? generateId() : number;
+// };
 
-app.post('/api/persons', (request, response) => {
-  // const allNames = persons.map((person) => person.name);
-  const body = request.body;
+app.post('/api/persons', (request, response, next) => {
+  const { name, number } = request.body;
 
-  People.find({})
-    .then((people) => {
-      const allNames = people.map((person) => people.name);
+  const person = new People({
+    name,
+    number,
+  });
+  console.log(person);
+  person
+    .save()
+    .then((savedPerson) => {
+      response.json(savedPerson);
+    })
+    .catch((error) => next(error));
+});
+// app.post('/api/persons', (request, response, next) => {
+//   // const allNames = persons.map((person) => person.name);
+//   // const body = request.body;
+//   const { name, number } = request.body;
 
-      if (!body.name) {
-        return response.status(400).json({
-          error: 'name missing',
-        });
-      } else if (body.name && !body.number) {
-        return response.status(400).json({
-          error: 'number missing',
-        });
-      } else if (allNames.includes(body.name)) {
-        return response.status(400).json({
-          error: 'name already exists in the phonebook',
-        });
-      }
+//   People.find({})
+//     .then((people) => {
+//       const allNames = people.map((person) => person.name);
 
-      const person = new People({
-        name: body.name,
-        number: body.number,
-      });
-      person.save().then((savedPerson) => {
-        response.json(savedPerson);
-      });
+//       // if (!body.name) {
+//       //   return response.status(400).json({
+//       //     error: 'name missing',
+//       //   });
+//       // } else if (body.name && !body.number) {
+//       //   return response.status(400).json({
+//       //     error: 'number missing',
+//       //   });
+//       if (allNames.includes(name)) {
+//         return response.status(400).json({
+//           error: 'name already exists in the phonebook',
+//         });
+//       }
+
+//       // const person = new People({
+//       //   name: body.name,
+//       //   number: body.number,
+//       // });
+//       const person = new People({
+//         name,
+//         number,
+//       });
+//       console.log(person);
+//       person.save().then((savedPerson) => {
+//         response.json(savedPerson);
+//       });
+//     })
+//     .catch((error) => next(error));
+// });
+
+app.put('/api/persons/:id', (request, response, next) => {
+  // const body = request.body;
+
+  // const person = {
+  //   name: body.name,
+  //   number: body.number,
+  // };
+
+  // People.findByIdAndUpdate(request.params.id, person, { new: true })
+  //   .then((updatedPerson) => {
+  //     response.json(updatedPerson);
+  //   })
+  //   .catch((error) => next(error));
+
+  const { name, number } = request.body;
+
+  People.findByIdAndUpdate(
+    request.params.id,
+    { name, number },
+    { new: true, runValidators: true, context: 'query' }
+  )
+    .then((updatedNote) => {
+      response.json(updatedNote);
     })
     .catch((error) => next(error));
 });
 
-app.put('/api/persons/:id', (request, response) => {
-  const body = request.body;
-
-  const person = {
-    name: body.name,
-    number: body.number,
-  };
-
-  People.findByIdAndUpdate(request.params.id, person, { new: true })
-    .then((updatedPerson) => {
-      response.json(updatedPerson);
-    })
-    .catch((error) => next(error));
-});
-
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
   People.findByIdAndDelete(request.params.id)
     .then((result) => {
       response.status(204).end();
@@ -135,6 +174,8 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.statuse(400).send({ error: 'malformatted id' });
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).send({ error: error.message });
   }
 
   next(error);
